@@ -207,11 +207,11 @@ p {
                 {%if order.status == 'Order Confirmed' %}
 
                 <li class="col-md-4">
-                    <form method="post" action="{% url 'return-product' order.id product.id %}">
+                    <form id="return-form-{{ order.id }}" method="post" action="{% url 'return-product' order.id product.id %}">
                         {% csrf_token %}
                         <label for="quantity">Quantity to Return :</label>
-                        <input type="number" class="form-control-sm" name="quantity" min="1" max="{{ order.quantity }}" >
-                        <button type="submit" class="btn btn-success-sm btn-lg"><span>Return</span></button>
+                        <input type="number" id="quantity-{{ order.id }}" class="form-control-sm" name="quantity" min="1" max="{{ order.quantity }}">
+                        <button type="button" class="btn btn-success-sm btn-lg" onclick="showReturnDialog({{ order.id }}, {{ order.quantity }}, {{ product.required_quantity }}, {{ product.free_quantity }}, {{ product.price }})"><span>Return</span></button>
                     </form>
                 </li>
                 {%endif%}
@@ -249,4 +249,27 @@ p {
     {%endfor%}
 </div>
 <br><br><br><br><br>
+<script>
+    function showReturnDialog(orderId, orderQuantity, requiredQuantity, freeQuantity, price) {
+        const returnQuantity = parseInt(document.getElementById(`quantity-${orderId}`).value);
+        const mainQuantity = orderQuantity - Math.floor(orderQuantity / requiredQuantity) * freeQuantity;
+        const free=orderQuantity-mainQuantity
+        const remQuantity = mainQuantity - returnQuantity;
+        const mainFreeQuantity = Math.floor(remQuantity / requiredQuantity) * freeQuantity;
+        const totalRemainingQuantity = mainFreeQuantity + remQuantity;
+        const downQuantity = orderQuantity - totalRemainingQuantity;
+        if (downQuantity<=orderQuantity) {
+            
+            const returnPrice = returnQuantity * price;
+    
+            const confirmation = confirm(`You have to return ${downQuantity} items. You will get $${returnPrice} for the main quantity. Do you want to proceed?`);
+            
+            if (confirmation) {
+                document.getElementById(`return-form-${orderId}`).submit();
+            }
+        } else {
+            alert('Invalid return quantity.');
+        }
+    }
+    </script>
 {% endblock content %}

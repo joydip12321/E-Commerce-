@@ -647,7 +647,7 @@ def return_product(request, order_id, product_id):
         down_quantity=order.quantity-tot_rem_quantity
         
         # Check if the return quantity is valid
-        if return_quantity > 0 and (down_quantity) <= order.quantity:
+        if down_quantity <= order.quantity:
             price+=return_quantity*product.price
             
             models.ReturnRequest.objects.create(
