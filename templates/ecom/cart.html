@@ -1,0 +1,161 @@
+{% extends 'ecom/homebase.html' %}
+{% load static %}
+{% block content %}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <script>
+    // Function to update total price based on quantity
+    function updateTotal() {
+      var total = 0;
+      var quantityInputs = document.querySelectorAll('input[name^="quantity_"]');
+      
+      quantityInputs.forEach(function(input) {
+        var price = parseFloat(input.dataset.price); // Retrieve price from data attribute
+        var requiredQuantity = (parseInt(input.dataset.requiredQuantity)-1); // Corrected to match the attribute name
+        var freeQuantity = parseInt(input.dataset.freeQuantity); // Corrected to match the attribute name
+        var quantity = parseInt(input.value);
+        
+        if (!isNaN(quantity) && !isNaN(price)) {
+          
+            total += quantity * price;
+          
+        }
+      });
+      
+      document.getElementById('total').innerText = 'Total $' + total.toFixed(2);
+    }
+  
+    // Add event listeners to quantity input fields
+    document.addEventListener('DOMContentLoaded', function() {
+      var quantityInputs = document.querySelectorAll('input[name^="quantity_"]');
+      
+      quantityInputs.forEach(function(input) {
+        input.addEventListener('change', function() {
+          updateTotal();
+        });
+      });
+    });
+  </script>
+  
+<style media="screen">
+  .button {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #f4511e;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 28px;
+  padding: 20px;
+  width: 200px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+.button2 {
+  background-color: white;
+  color: black;
+  border: 2px solid #008CBA;
+}
+
+.button2:hover {
+  background-color: #008CBA;
+  color: white;
+}
+
+</style>
+
+</head>
+<br><br><br><br>
+
+<div class="container">
+  <div class="panel panel-success">
+    <div class="panel-heading">
+      <h6 style="text-align:center;" class="panel-title">My Cart</h6>
+    </div>
+    <form method="POST">
+      {% csrf_token %}
+      <table class="table table-hover table-bordered" id="dev-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Image</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Buy Product to free</th>
+            <th>Get free</th>
+
+            <th>Quantity</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        {% for p in products %}
+          {% if p %}
+            <tr>
+              <td>{{ p.name }}</td>
+              <td><img src="{% static p.product_image.url %}" alt="Profile Pic" height="50px" width="50px" /></td>
+              <td>$ {{ p.price }}</td>
+              <td>{{ p.description }}</td>
+              <td>{{ p.required_quantity }}</td>
+              <td>{{ p.free_quantity }}</td>
+
+
+              <td>
+                <input class="form-control-sm" type="number" name="quantity_{{ p.id }}" id="quantity_{{ p.id }}" data-product-id="{{ p.id }}" data-price="{{ p.price }}" data-required-quantity="{{ p.required_quantity }}" data-free-quantity="{{ p.free_quantity }}" value="0" min="0">
+              </td>
+              <td><a class="btn btn-danger btn-xs" href="{% url 'remove-from-cart' p.id %}"><span class="glyphicon glyphicon-trash"></span></a></td>
+            </tr>
+          {% else %}
+            <br><br><br>
+            <h1>No products</h1>
+          {% endif %}
+        {% endfor %}
+      </table>
+      <div style="text-align: center;">
+        <button type="button" class="btn btn-danger btn-lg" id="total">Total ${{ total }}</button>
+        <button type="submit" class="btn btn-success btn-lg"><span>Purchase</span></button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+ <!-- {%if messages %}
+    {%for message in messages%}
+    alert('{{message}}');
+    {%endfor%}
+    {%endif%} -->
+</script>
+
+<br><br><br><br><br>
+
+{% endblock content %}

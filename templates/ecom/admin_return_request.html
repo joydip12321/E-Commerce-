@@ -1,0 +1,52 @@
+{% extends 'ecom/admin_base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+
+<h1>Return Requests</h1>
+<table class="table table-hover table-bordered" id="dev-table">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Product</th>
+        <th>Return Quantity</th>
+        <th>Price</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    {% for request in return_requests %}
+    {% if request %}
+
+    <tr>
+      <td> {{request.order.id}}</td>
+      <td> {{request.product.name}}</td>
+
+      <td>{{request.return_quantity}}</td>
+      <td>{{request.order_price}}</td>
+<td>
+      
+      {% if not request.approved %}
+      <form method="post" action="{% url 'process-return-request' request.id%}">
+        {% csrf_token %}
+        <input type="submit" name="action" value="accept">
+        <input type="submit" name="action" value="reject">
+      </form>
+    {% else %}
+      <p>Status: {% if request.approved %}Accepted{% else %}Rejected{% endif %}</p>
+    {% endif %}
+</td>
+    </tr>
+    {%else%}
+    <br><br><br>
+    <h1>No Products!!</h1>
+    {% endif %}
+    {% endfor %}
+  </table>
+  <script>
+    <!-- {%if messages %}
+    {%for message in messages%}
+    alert('{{message}}');
+    {%endfor%}
+    {%endif%} -->
+</script>
+
+{% endblock content %}
