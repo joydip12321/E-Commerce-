@@ -252,17 +252,19 @@ p {
 <script>
     function showReturnDialog(orderId, orderQuantity, requiredQuantity, freeQuantity, price) {
         const returnQuantity = parseInt(document.getElementById(`quantity-${orderId}`).value);
+        const freeq=orderQuantity 
         const mainQuantity = orderQuantity - Math.floor(orderQuantity / requiredQuantity) * freeQuantity;
         const free=orderQuantity-mainQuantity
         const remQuantity = mainQuantity - returnQuantity;
         const mainFreeQuantity = Math.floor(remQuantity / requiredQuantity) * freeQuantity;
         const totalRemainingQuantity = mainFreeQuantity + remQuantity;
         const downQuantity = orderQuantity - totalRemainingQuantity;
+        const freequ=downQuantity-returnQuantity
         if (downQuantity<=orderQuantity) {
             
             const returnPrice = returnQuantity * price;
     
-            const confirmation = confirm(`You have to return ${downQuantity} items. You will get $${returnPrice} for the main quantity. Do you want to proceed?`);
+            const confirmation = confirm(`You have to return ${returnQuantity} items from your product with ${freequ} free product also. You will get $${returnPrice} for the main quantity. Do you want to proceed?`);
             
             if (confirmation) {
                 document.getElementById(`return-form-${orderId}`).submit();
