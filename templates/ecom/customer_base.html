@@ -255,7 +255,13 @@ body {
 
                 <li class="upper-links"><a class="links" href="/my-order">Track Orders</a></li>
                 <li class="upper-links"><a class="links" href="/my-profile">Profile</a></li>
-                <li class="upper-links"><a class="links" href="/logout">Logout</a></li>
+                <li class="upper-links">
+                <form method="post" action="{% url 'logout' %}">
+                  {% csrf_token %}
+                  <button type="submit">Logout</button>
+              </form>
+            </li>
+              
                 
             </ul>
         </div>
@@ -305,7 +311,7 @@ body {
       <div class="col-md-12 col-sm-12">
         <div style="color:#ffffff;" class="wow fadeInUp footer-copyright">
           <p>Ecommerce Site in Python using Django Framework<br>
-            &copy; 2022 Developed By Naem Azam </p>
+            &copy; 2024 Developed By Joydip Das </p>
         </div>
       </div>
     </div>
