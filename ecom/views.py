@@ -297,39 +297,56 @@ def cart_view(request):
 
         for p in products:
                 quantity = int(request.POST.get(f'quantity_{p.id}', 0))  # Correctly retrieve the quantity
-                req_quantity=math.floor(quantity/p.required_quantity)*p.free_quantity
+                req_quantity = 0
+                
+                # Check if required_quantity is set, otherwise no free items are given
+                if p.required_quantity and p.required_quantity != 0:
+                    req_quantity = math.floor(quantity / p.required_quantity) * p.free_quantity
 
-                if quantity > 0 and (quantity+req_quantity) <= p.quantity:
-                    total+=(p.price*quantity)
-                    if quantity>=p.required_quantity:
-                        free=math.floor(quantity/p.required_quantity)
-                        free*=p.free_quantity
-                        quantity+=free
-                        
+                # Ensure the requested quantity + free items is within the available stock
+                if quantity > 0 and (quantity + req_quantity) <= p.quantity:
+                    total += (p.price * quantity)
+                    
+                    # Only calculate free items if required_quantity is valid (not zero)
+                    if p.required_quantity and quantity >= p.required_quantity:
+                        free = math.floor(quantity / p.required_quantity) * p.free_quantity
+                        quantity += free
+
+                    # Deduct the final quantity (including free items if applicable) from the product stock
                     p.quantity -= quantity
                     
+                    # Save the updated product quantity
                     p.save()
+
+                    # Add the product to the list of purchased items
                     purchased_products.append(p.id)
+
+                    # Create the order
                     models.Orders.objects.get_or_create(
                         customer=customer,
                         product=p,
                         status='Pending',
                         quantity=quantity,
-                        email="email",  # Use email from Customer model
-                        mobile=customer.mobile,  # Use mobile from Customer model
-                        address=customer.address,  # Use address from Customer model
+                        email=customer.email,  # Use email from the Customer model
+                        mobile=customer.mobile,  # Use mobile from the Customer model
+                        address=customer.address,  # Use address from the Customer model
                         price=total
                     )
+
+                    # Inform the user that the order has been placed
                     messages.info(request, 'Order Placed')
+
+                    # Redirect to the 'my-order' page
                     return redirect('my-order')
+
 
                 else:
                     messages.info(request, 'Too much quantity or quantity missing! Not available for '+ p.name)
 
     return render(request,'ecom/cart.html',{'products':products,'total':total,'product_count_in_cart':product_count_in_cart})
 
-@login_required(login_url='customerlogin')
-@user_passes_test(is_customer)
+# @login_required(login_url='customerlogin')
+# @user_passes_test(is_customer)
 def remove_from_cart_view(request,pk):
     #for counter in cart
     if 'product_ids' in request.COOKIES:
