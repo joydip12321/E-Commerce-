@@ -3,29 +3,47 @@
 <html lang="en" dir="ltr">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>E-commerce</title>
-  <style media="screen">
-    .footer{
-      position: fixed;
-    }
-  </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>About Us - E-commerce</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body style="background-color:#f7f7f7;">
-  {%if request.user.is_authenticated%}
-    {% include "ecom/customer_navbar.html" %}
-  {%else%}
-    {% include "ecom/navbar.html" %}
-  {%endif%}
-  <br><br><br>
-<h3 style="text-align:center;">"A simple project based on an Online Ecommerce Site that uses Python with Django Web Framework. Following Django project contains all the important features which can be in use for the second year IT students for their college projects." </h3>
-<br><br>
-Dev: Hi my name is Joydip Das . I'm Self-taught Programmer, Technophile And an open-source enthusiast and maintainer.
-<br><br><br><br><br><br><br><br><br><br><br><br>
-  {% include "ecom/footer.html" %}
-</body>
+<body class="bg-gray-100">
+    {% if request.user.is_authenticated %}
+        {% include "ecom/customer_navbar.html" %}
+    {% else %}
+        {% include "ecom/navbar.html" %}
+    {% endif %}
 
+    <div class="container mx-auto my-10 p-6 bg-white rounded-lg shadow-lg">
+        <h1 class="text-3xl font-semibold text-center text-blue-600">About Us</h1>
+        <p class="mt-4 text-gray-700 text-3xl text-center">
+            Welcome to our e-commerce platform! We are dedicated to providing you with the best online shopping experience.
+            Our mission is to connect customers with quality products while offering exceptional service.
+        </p>
+        <br>
+        <h2 class="text-2xl font-semibold text-blue-500">Who We Are</h2>
+        <p class="mt-2 text-gray-600 text-md text-center">
+            Our team is a group of passionate individuals committed to making your shopping experience seamless and enjoyable.
+            We strive to curate a diverse range of products that cater to your needs and preferences.
+        </p>
+        <br>
+        <h2 class="text-2xl font-semibold text-blue-500">Our Values</h2>
+        <ul class="mt-2 text-gray-600 list-disc list-inside text-left">
+            <li>Quality: We prioritize quality in every product we offer.</li>
+            <li>Integrity: We believe in honesty and transparency in all our dealings.</li>
+            <li>Customer Satisfaction: Your satisfaction is our top priority.</li>
+        </ul>
+        <br>
+        <h2 class="text-2xl font-semibold text-blue-500">Meet the Developer</h2>
+        <p class="mt-2 text-gray-600 text-md text-center">
+            Hi, my name is Joydip Das. I'm a self-taught programmer, technophile, and an open-source enthusiast.
+            I’m passionate about leveraging technology to enhance lives and am committed to continuous learning and improvement.
+        </p>
+    </div>
+
+    {% include "ecom/footer.html" %}
+</body>
 
 </html>

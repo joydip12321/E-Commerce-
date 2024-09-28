@@ -1,9 +1,10 @@
 {% extends 'ecom/admin_base.html' %}
 {% load widget_tweaks %}
-{% block content %}
 
+{% block content %}
 <h1>Return Requests</h1>
-<table class="table table-hover table-bordered" id="dev-table">
+<div class="table-responsive"> <!-- Make the table responsive -->
+  <table class="table table-hover table-bordered" id="dev-table">
     <thead>
       <tr>
         <th>Order ID</th>
@@ -13,40 +14,54 @@
         <th>Actions</th>
       </tr>
     </thead>
-    {% for request in return_requests %}
-    {% if request %}
-
-    <tr>
-      <td> {{request.order.id}}</td>
-      <td> {{request.product.name}}</td>
-
-      <td>{{request.return_quantity}}</td>
-      <td>{{request.order_price}}</td>
-<td>
-      
-      {% if not request.approved %}
-      <form method="post" action="{% url 'process-return-request' request.id%}">
-        {% csrf_token %}
-        <input type="submit" name="action" value="accept">
-        <input type="submit" name="action" value="reject">
-      </form>
-    {% else %}
-      <p>Status: {% if request.approved %}Accepted{% else %}Rejected{% endif %}</p>
-    {% endif %}
-</td>
-    </tr>
-    {%else%}
-    <br><br><br>
-    <h1>No Products!!</h1>
-    {% endif %}
-    {% endfor %}
+    <tbody> <!-- Added tbody for better semantic structure -->
+      {% for request in return_requests %}
+      <tr>
+        <td>{{ request.order.id }}</td>
+        <td>{{ request.product.name }}</td>
+        <td>{{ request.return_quantity }}</td>
+        <td>{{ request.order_price }}</td>
+        <td>
+          {% if not request.approved %}
+            <form method="post" action="{% url 'process-return-request' request.id %}" id="return-form-{{ request.id }}">
+              {% csrf_token %}
+              <input type="button" value="Accept" class="btn btn-success btn-xs" onclick="updateStatus('{{ request.id }}', true)">
+              <input type="button" value="Reject" class="btn btn-danger btn-xs" onclick="updateStatus('{{ request.id }}', false)">
+            </form>
+          {% else %}
+            <p>Status: {% if request.approved %}Accepted{% else %}Rejected{% endif %}</p>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
   </table>
-  <script>
-    <!-- {%if messages %}
-    {%for message in messages%}
-    alert('{{message}}');
-    {%endfor%}
-    {%endif%} -->
+</div> <!-- End of table-responsive -->
+
+<script>
+  function updateStatus(requestId, isAccepted) {
+    const form = document.getElementById('return-form-' + requestId);
+    const formData = new FormData(form);
+    formData.append('action', isAccepted ? 'accept' : 'reject');
+
+    fetch(form.action, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}'
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        const statusCell = form.closest('tr').querySelector('td:last-child');
+        statusCell.innerHTML = `<p>Status: ${isAccepted ? 'Accepted' : 'Rejected'}</p>`;
+        form.style.display = 'none';  // Hide the buttons
+      } else {
+        console.error('Error processing the request:', response.statusText);
+      }
+    })
+    .catch(error => console.error('Fetch error:', error));
+  }
 </script>
 
 {% endblock content %}
