@@ -44,14 +44,17 @@ Customers can download invoices for their orders, which contain detailed product
 ## File Stucrure
 
 ```shell
-├── Ecommerce-WebApp (Current Directory)
+├── E-COMMERCE- (Current Directory)
     ├── ecom
     ├── ecommerce
+    ├── myenv
+    ├── static
     ├── templates
+    ├── env
     ├── db.sqlite3
     ├── manage.py
+    ├── README.md
     ├── requirements.txt
-    └── static
         
 ```
 
