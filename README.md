@@ -1,4 +1,4 @@
-# Ecommerce WebApp Using Django Framework
+# Ecommerce Using Django Framework
 
 ![Logo](gitimg/1.PNG)
 
@@ -23,7 +23,7 @@ Last but not least, a clean and simple dashboard is presented with various color
 - Customer Registration
 - Add to Cart System
 - Search Products
-- Simple Payment Structure
+
 - List Orders
 - Track Orders
 - Download Invoice (PDF)
@@ -95,7 +95,7 @@ python manage.py migrate
 
 **5. Login Credentials**
 
-Create Super User (HOD)
+Create Super User 
 ```
 $  python manage.py createsuperuser
 ```
@@ -113,12 +113,6 @@ Command for Mac:
 $ python3 manage.py runserver
 ```
 
-## Screenshots
-
-![Admin Page](gitimg/2.PNG)
-![Stuff Page](gitimg/3.PNG)
-![student Page](gitimg/4.PNG)
-![student Page](gitimg/5.PNG)
 
 
 
