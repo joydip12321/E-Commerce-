@@ -104,7 +104,7 @@ python manage.py migrate
 
 **5. Login Credentials**
 
-Create Super User (HOD)
+Create Super User 
 ```
 $  python manage.py createsuperuser
 ```
