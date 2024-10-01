@@ -14,7 +14,6 @@ Moving towards the order management section, the system forwards each and every 
 
 Last but not least, a clean and simple dashboard is presented with various color combinations for a greater user experience while using this eCommerce Site Project in Python Django Framework. For its UI elements, a free open-source CSS framework; Bootstrap is on board with some Vanilla CSS too(codeastro.com). Presenting a new e-commerce website Project in Python Django which includes an admin panel with client-side interaction.
 
-[Watch Full Video]()
 
 ## Available Features:
 
