@@ -27,6 +27,7 @@
               {% csrf_token %}
               <input type="button" value="Accept" class="btn btn-success btn-xs" onclick="updateStatus('{{ request.id }}', true)">
               <input type="button" value="Reject" class="btn btn-danger btn-xs" onclick="updateStatus('{{ request.id }}', false)">
+          
             </form>
           {% else %}
             <p>Status: {% if request.approved %}Accepted{% else %}Rejected{% endif %}</p>
@@ -37,7 +38,6 @@
     </tbody>
   </table>
 </div> <!-- End of table-responsive -->
-
 <script>
   function updateStatus(requestId, isAccepted) {
     const form = document.getElementById('return-form-' + requestId);
@@ -56,12 +56,43 @@
         const statusCell = form.closest('tr').querySelector('td:last-child');
         statusCell.innerHTML = `<p>Status: ${isAccepted ? 'Accepted' : 'Rejected'}</p>`;
         form.style.display = 'none';  // Hide the buttons
+        // Store the status in localStorage
+        localStorage.setItem('requestStatus-' + requestId, isAccepted ? 'Accepted' : 'Rejected');
+        
       } else {
         console.error('Error processing the request:', response.statusText);
       }
     })
     .catch(error => console.error('Fetch error:', error));
+    
   }
+
+  // On page load, check localStorage for each request and hide the form if status is already set
+  document.addEventListener('DOMContentLoaded', () => {
+    const forms = document.querySelectorAll('[id^="return-form-"]');
+    forms.forEach(form => {
+      const requestId = form.id.split('-').pop();
+      const savedStatus = localStorage.getItem('requestStatus-' + requestId);
+      
+      if (savedStatus) {
+        // Update the status cell with the stored status
+        const statusCell = form.closest('tr').querySelector('td:last-child');
+        statusCell.innerHTML = `<p>Status: ${savedStatus}</p>`;
+        // Hide the form if the status is set
+        form.style.display = 'none';
+      }
+    });
+  });
 </script>
+{% if messages %}
+  <div class="alert-messages">
+    {% for message in messages %}
+      <div class="alert alert-info">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
 
 {% endblock content %}

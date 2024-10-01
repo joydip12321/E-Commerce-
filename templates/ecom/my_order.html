@@ -272,7 +272,7 @@ p {
         const totalRemainingQuantity = mainFreeQuantity + remQuantity;
         const downQuantity = orderQuantity - totalRemainingQuantity;
         const freequ=downQuantity-returnQuantity
-        if (downQuantity<=orderQuantity) {
+        if (downQuantity<=orderQuantity && returnQuantity>0) {
             
             const returnPrice = returnQuantity * price;
     
