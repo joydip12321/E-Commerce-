@@ -233,7 +233,8 @@ def search_view(request):
         return render(request,'ecom/customer_home.html',{'products':products,'word':word,'product_count_in_cart':product_count_in_cart})
     return render(request,'ecom/index.html',{'products':products,'word':word,'product_count_in_cart':product_count_in_cart})
 
-
+@login_required(login_url='customerlogin')
+@user_passes_test(is_customer)
 # any one can add product to cart, no need of signin
 def add_to_cart_view(request,pk):
     products=models.Product.objects.all()
@@ -259,13 +260,14 @@ def add_to_cart_view(request,pk):
     else:
         response.set_cookie('product_ids', pk)
 
-    product=models.Product.objects.get(id=pk)
-    messages.info(request, product.name + ' added to cart successfully!')
+    # product=models.Product.objects.get(id=pk)
+    # messages.info(request, product.name + ' added to cart successfully!')
 
     return response
 
 
-
+@login_required(login_url='customerlogin')
+@user_passes_test(is_customer)
 # for checkout of cart
 def cart_view(request):
     #for cart counter
@@ -295,37 +297,56 @@ def cart_view(request):
 
         for p in products:
                 quantity = int(request.POST.get(f'quantity_{p.id}', 0))  # Correctly retrieve the quantity
-                req_quantity=math.floor(quantity/p.required_quantity)*p.free_quantity
-                if quantity > 0 and (quantity+req_quantity) <= p.quantity:
-                    total+=(p.price*quantity)
-                    if quantity>=p.required_quantity:
-                        free=math.floor(quantity/p.required_quantity)
-                        free*=p.free_quantity
-                        quantity+=free
-                        
+                req_quantity = 0
+                
+                # Check if required_quantity is set, otherwise no free items are given
+                if p.required_quantity and p.required_quantity != 0:
+                    req_quantity = math.floor(quantity / p.required_quantity) * p.free_quantity
+
+                # Ensure the requested quantity + free items is within the available stock
+                if quantity > 0 and (quantity + req_quantity) <= p.quantity:
+                    total += (p.price * quantity)
+                    
+                    # Only calculate free items if required_quantity is valid (not zero)
+                    if p.required_quantity and quantity >= p.required_quantity:
+                        free = math.floor(quantity / p.required_quantity) * p.free_quantity
+                        quantity += free
+
+                    # Deduct the final quantity (including free items if applicable) from the product stock
                     p.quantity -= quantity
                     
+                    # Save the updated product quantity
                     p.save()
+
+                    # Add the product to the list of purchased items
                     purchased_products.append(p.id)
+
+                    # Create the order
                     models.Orders.objects.get_or_create(
                         customer=customer,
                         product=p,
                         status='Pending',
                         quantity=quantity,
-                        email="email",  # Use email from Customer model
-                        mobile=customer.mobile,  # Use mobile from Customer model
-                        address=customer.address,  # Use address from Customer model
+                        email=customer.email,  # Use email from the Customer model
+                        mobile=customer.mobile,  # Use mobile from the Customer model
+                        address=customer.address,  # Use address from the Customer model
                         price=total
                     )
-                    messages.info(request, 'Order Placed for '+ p.name)
+
+                    # Inform the user that the order has been placed
+                    messages.info(request, 'Order Placed')
+
+                    # Redirect to the 'my-order' page
+                    return redirect('my-order')
+
 
                 else:
-                    messages.info(request, 'Too much quantity! Not available for '+ p.name)
-                return redirect('my-order')
+                    messages.info(request, 'Too much quantity or quantity missing! Not available for '+ p.name)
 
     return render(request,'ecom/cart.html',{'products':products,'total':total,'product_count_in_cart':product_count_in_cart})
 
-
+# @login_required(login_url='customerlogin')
+# @user_passes_test(is_customer)
 def remove_from_cart_view(request,pk):
     #for counter in cart
     if 'product_ids' in request.COOKIES:
@@ -661,7 +682,7 @@ def return_product(request, order_id, product_id):
             messages.success(request, f'{return_quantity} {product.name}(s) returned requested successfully.')
 
             # Redirect to some page, maybe the order detail page
-            return redirect('customer-home')
+            return redirect('my-order')
         else:
             # Add an error message if the return quantity is invalid
             messages.error(request, 'Invalid return quantity.')
@@ -675,7 +696,6 @@ def process_return_request(request, request_id):
     if request.method == 'POST':
         action = request.POST.get('action')
         return_request = models.ReturnRequest.objects.get(id=request_id)
-        order=return_request.order
 
         if action == 'accept':
             # Process acceptance logic
@@ -684,18 +704,32 @@ def process_return_request(request, request_id):
             
             # Decrease the quantity of the product
             product = return_request.product
-            product.quantity += return_request.return_quantity
             
-            order.price-=return_request.order_price
-            order.quantity-=return_request.return_quantity
-            order.save()    
-            product.save()
-            messages.info(request, str(return_request.order_price) + ' have been refunded')
-
+            # Check if the product's quantity will go below zero
+            if product.quantity + return_request.return_quantity >= 0:
+                product.quantity += return_request.return_quantity
+            
+                # Update order details
+                order = return_request.order
+                if order.quantity - return_request.return_quantity >= 0:
+                    order.price -= return_request.order_price
+                    order.quantity -= return_request.return_quantity
+                    order.save()    
+                    product.save()
+                    messages.info(request, str(return_request.order_price) + ' has been refunded')
+                else:
+                    messages.error(request, "Cannot process refund: Order quantity would go below zero.")
+            else:
+                messages.error(request, "Cannot process refund: Product quantity would go below zero.")
+                
             return redirect('admin-ret')
 
         elif action == 'reject':
             # Process rejection logic
             return_request.approved = False
             return_request.save()
+            messages.info(request, "Return request has been rejected.")
             return redirect('admin-ret')
+
+    # In case of a GET request, redirect to the admin return requests page
+    return redirect('admin-ret')  # Redirect if method is not POST

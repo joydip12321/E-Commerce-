@@ -1,4 +1,4 @@
-{% extends 'ecom/customer_base.html' %}
+{% extends 'ecom/navbar.html' %}
 {% load widget_tweaks %}
 {% block content %}
 
@@ -69,6 +69,9 @@
               {% render_field customerForm.mobile class="form-control" placeholder="Mobile" %}
             </div>
             <div class="form-group">
+              {% render_field customerForm.email class="form-control" placeholder="email" %}
+            </div>
+            <div class="form-group">
               {% render_field customerForm.profile_pic class="form-control" placeholder="Profile Picture" %}
             </div>
           </div>
@@ -90,6 +93,7 @@
     </div>
   </div>
 </form>
+{% include "ecom/footer.html" %}
 
 
 {% endblock content %}

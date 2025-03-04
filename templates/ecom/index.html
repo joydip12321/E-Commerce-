@@ -1,4 +1,4 @@
-{% extends 'ecom/homebase.html' %}
+{% extends 'ecom/navbar.html' %}
 {% load static %}
 {% block content %}
 
@@ -83,7 +83,7 @@ body {
 }
 
 .el-wrapper:hover .img {
-  webkit-filter: blur(7px);
+  
   -o-filter: blur(7px);
   -ms-filter: blur(7px);
   filter: blur(7px);
@@ -321,7 +321,7 @@ img {
 }
 
 .slider-container{
-  height: 35%;
+  min-height: 40%;
   width: 100%;
   position: relative;
   overflow: hidden; 
@@ -369,16 +369,16 @@ img {
 }
 
 .slide-1 {
-  background-image: url("{% static 'images/e-laptop.avif' %}");
+  background-image: url("{% static 'images/banner1.jpg' %}");
 }
 .slide-2 {
-  background-image: url("{% static 'images/ecom-banner4.jpg' %}");
+  background-image: url("{% static 'images/banner2.jpg' %}");
 }
 .slide-3 {
-  background-image: url("{% static 'images/ecom-banner1.png' %}");
+  background-image: url("{% static 'images/ecom-banner3.jpg' %}");
 }
 .slide-4 {
-  background-image: url("{% static 'images/ecom-banner3.jpg' %}");
+  background-image: url("{% static 'images/banner4.jpg' %}");
 }
   </style>
 
@@ -410,7 +410,7 @@ img {
 <h3 style="text-align:center; color:#3E454C;">{{word}}</h3>
 <br>
 
-<!-- products data starttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt -->
+<!-- products data starttt -->
   <div class="row">
 
       {% for p in products %}
@@ -470,10 +470,10 @@ img {
     {%endfor%}
     {%endif%} -->
 </script>
-<br><br><br>
 <br><br><br><br><br><br><br><br><br><br><br><br>
 
 
 
+{% include "ecom/footer.html" %}
 
 {% endblock content %}

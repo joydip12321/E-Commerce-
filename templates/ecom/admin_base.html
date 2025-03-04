@@ -4,10 +4,17 @@
 <head>
   <title>Admin Panel - Ecommerce</title>
   <meta charset="utf-8">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <style type="text/css">
     .bs-example {
       margin: 0px;
@@ -100,10 +107,14 @@
 
         <div class="navbar-nav navbar-right">
           <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
-        </div>
+              {% csrf_token %}
+              <button type="submit" class="text-white hover:none focus:outline-none">
+                  Logout
+              </button>
+          </form>
+      </div>
+       
+      
 
       </div>
     </nav>
@@ -115,26 +126,7 @@
   {% endblock content %}
   <!-- content end-->
 <br><br><br><br><br><br><br><br>
-  <!-- <footer>
-    <p>
-      <a id="ftr" href="#" class="fa fa-facebook"></a>
-      <a id="ftr" href="#" class="fa fa-whatsapp"></a>
-      <a id="ftr" href="#" class="fa fa-instagram"></a>
-      <a id="ftr" href="#" class="fa fa-twitter"></a>
-    </p>
 
-    <br>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12 col-sm-12">
-          <div style="color:#ffffff;" class="wow fadeInUp footer-copyright">
-            <p>
-              Copyright &copy; 2022 Developed by naem azam </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </footer> -->
 
 </body>
 </html>
